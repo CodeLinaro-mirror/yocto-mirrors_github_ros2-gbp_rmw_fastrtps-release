@@ -15,9 +15,7 @@
 #include <rosidl_dynamic_typesupport/identifier.h>
 
 #include <algorithm>
-#include <memory>
 #include <string>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -59,8 +57,8 @@
 #include "rmw_fastrtps_shared_cpp/subscription.hpp"
 #include "rmw_fastrtps_shared_cpp/utils.hpp"
 
-#include "identifier.hpp"
-#include "subscription.hpp"
+#include "rmw_fastrtps_cpp/identifier.hpp"
+#include "rmw_fastrtps_cpp/subscription.hpp"
 
 #include "buffer_backend_context.hpp"
 #include "rosidl_buffer_backend_registry/backend_utils.hpp"
@@ -83,8 +81,9 @@ public:
 
   void on_data_available(eprosima::fastdds::dds::DataReader * reader) override
   {
+    auto unread = reader->get_unread_count();
     if (event_) {
-      event_->notify_buffer_data_available(reader);
+      event_->notify_buffer_data_available(unread > 0 ? static_cast<size_t>(unread) : 1);
     }
   }
 
@@ -766,19 +765,10 @@ __create_subscription(
           continue;
         }
         auto it = all_backends.find(name);
-        if (it == all_backends.end()) {
-          std::string available;
-          for (const auto & [k, v] : all_backends) {
-            available += (available.empty() ? "" : ", ") + k;
-          }
-          RMW_SET_ERROR_MSG_WITH_FORMAT_STRING(
-            "Buffer backend '%s' specified in acceptable_buffer_backends "
-            "is not installed. Available backends: %s",
-            name.c_str(), available.c_str());
-          return nullptr;
+        if (it != all_backends.end()) {
+          filtered_backends[it->first] = it->second;
+          my_backend_types.push_back(it->first);
         }
-        filtered_backends[it->first] = it->second;
-        my_backend_types.push_back(it->first);
       }
     }
 

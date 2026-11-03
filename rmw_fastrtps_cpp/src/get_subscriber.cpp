@@ -15,7 +15,7 @@
 #include "rmw_fastrtps_cpp/get_subscriber.hpp"
 
 #include "rmw_fastrtps_shared_cpp/custom_subscriber_info.hpp"
-#include "identifier.hpp"
+#include "rmw_fastrtps_cpp/identifier.hpp"
 
 namespace rmw_fastrtps_cpp
 {

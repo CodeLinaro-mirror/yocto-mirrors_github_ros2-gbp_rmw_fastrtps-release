@@ -17,7 +17,7 @@
 #include "rmw_fastrtps_shared_cpp/custom_participant_info.hpp"
 #include "rmw_fastrtps_shared_cpp/rmw_context_impl.hpp"
 
-#include "identifier.hpp"
+#include "rmw_fastrtps_cpp/identifier.hpp"
 
 namespace rmw_fastrtps_cpp
 {

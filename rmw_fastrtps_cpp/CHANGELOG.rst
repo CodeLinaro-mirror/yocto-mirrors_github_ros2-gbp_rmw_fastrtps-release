@@ -2,49 +2,30 @@
 Changelog for package rmw_fastrtps_cpp
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-9.6.1 (2026-11-03)
-------------------
-* Report the written length in rmw_serialize (`#964 <https://github.com/ros2/rmw_fastrtps/issues/964>`_)
-* Fix buffer discovery during participant initialization (`#960 <https://github.com/ros2/rmw_fastrtps/issues/960>`_)
-* Report correct new message counts for buffer-aware subscriptions (`#951 <https://github.com/ros2/rmw_fastrtps/issues/951>`_)
-* Return an error when a buffer-aware publish fails (`#958 <https://github.com/ros2/rmw_fastrtps/issues/958>`_)
-* Check rmw_take_with_info arguments before the buffer-aware path (`#955 <https://github.com/ros2/rmw_fastrtps/issues/955>`_)
-* Fix spurious QoS event wakeups in rmw_wait (`#930 <https://github.com/ros2/rmw_fastrtps/issues/930>`_)
-* Honor ignore_local_publications on the loaned and dynamic take paths (`#944 <https://github.com/ros2/rmw_fastrtps/issues/944>`_)
-* Report an error for unknown acceptable_buffer_backends names (`#946 <https://github.com/ros2/rmw_fastrtps/issues/946>`_)
-* Support rmw_take_sequence for buffer-aware subscriptions (`#936 <https://github.com/ros2/rmw_fastrtps/issues/936>`_)
-* Honor ignore_local_publications on the buffer-aware take paths (`#934 <https://github.com/ros2/rmw_fastrtps/issues/934>`_)
-* Remove ament_export_include_directories and ament_export_libraries calls (`#924 <https://github.com/ros2/rmw_fastrtps/issues/924>`_)
-* Report main publisher GID for messages taken from the buffer-aware CPU channel. (`#927 <https://github.com/ros2/rmw_fastrtps/issues/927>`_)
-* Remove rmw_fastrtps_dynamic_cpp and rmw_fastrtps_shared_cpp (`#923 <https://github.com/ros2/rmw_fastrtps/issues/923>`_)
-* Use the SPDX identifier Apache-2.0 in package.xml license tags (`#921 <https://github.com/ros2/rmw_fastrtps/issues/921>`_)
-* Contributors: Dennis Lanov, Maurice Alexander Purnawan, Michael Carroll, Miguel Company, ObeliskGate, Tomoya Fujita
+9.4.11 (2026-11-03)
+-------------------
+* Report main publisher GID for messages taken from the buffer-aware CPU channel. (`#927 <https://github.com/ros2/rmw_fastrtps/issues/927>`_) (`#932 <https://github.com/ros2/rmw_fastrtps/issues/932>`_)
+* Serialize encapsulation header on buffer aware topics (`#891 <https://github.com/ros2/rmw_fastrtps/issues/891>`_) (`#893 <https://github.com/ros2/rmw_fastrtps/issues/893>`_)
+* Contributors: mergify[bot]
 
-9.6.0 (2026-09-16)
-------------------
-* Add missing exec_depend on rmw_dds_common (`#919 <https://github.com/ros2/rmw_fastrtps/issues/919>`_)
-* Unique network flows optional checks (`#872 <https://github.com/ros2/rmw_fastrtps/issues/872>`_)
-* Reuse FastBuffer managed buffer for each endpoint. (`#904 <https://github.com/ros2/rmw_fastrtps/issues/904>`_)
-* Contributors: Daisuke Kato, Scott K Logan, Thomas Moore
+9.4.10 (2026-09-15)
+-------------------
+* Add missing exec_depend on rmw_dds_common (`#920 <https://github.com/ros2/rmw_fastrtps/issues/920>`_)
+* Reuse FastBuffer managed buffer for each endpoint. (`#904 <https://github.com/ros2/rmw_fastrtps/issues/904>`_) (`#907 <https://github.com/ros2/rmw_fastrtps/issues/907>`_)
+* Contributors: mergify[bot]
 
-9.5.2 (2026-07-28)
+9.4.9 (2026-07-30)
 ------------------
-* Fix buffer-aware subscriptions to preserve unread data across rmw_wait calls (`#900 <https://github.com/ros2/rmw_fastrtps/issues/900>`_)
-* Fix transient-local publishing for buffer-aware path (`#898 <https://github.com/ros2/rmw_fastrtps/issues/898>`_)
-* use C++ 20 in default. (`#894 <https://github.com/ros2/rmw_fastrtps/issues/894>`_)
-* Serialize encapsulation header on buffer aware topics (`#891 <https://github.com/ros2/rmw_fastrtps/issues/891>`_)
-* Contributors: CY Chen, Miguel Company, Tomoya Fujita
+* Fix buffer-aware subscriptions to preserve unread data across rmw_wait calls (`#900 <https://github.com/ros2/rmw_fastrtps/issues/900>`_) (`#902 <https://github.com/ros2/rmw_fastrtps/issues/902>`_)
+* Fix transient-local publishing for buffer-aware path (`#898 <https://github.com/ros2/rmw_fastrtps/issues/898>`_) (`#901 <https://github.com/ros2/rmw_fastrtps/issues/901>`_)
+* Contributors: mergify[bot]
 
-9.5.1 (2026-05-13)
+9.4.8 (2026-05-13)
 ------------------
-* Clean up logs for the rosidl::Buffer path (`#886 <https://github.com/ros2/rmw_fastrtps//issues/886>`_)
-* Contributors: CY Chen
-
-9.5.0 (2026-05-07)
-------------------
-* Fix rmw_take_serialized. (`#881 <https://github.com/ros2/rmw_fastrtps/issues/881>`_)
-* Fix UB in accessing the keys (`#879 <https://github.com/ros2/rmw_fastrtps/issues/879>`_)
-* Contributors: Chris Lalancette
+* Clean up logs for the rosidl::Buffer path (`#886 <https://github.com/ros2/rmw_fastrtps//issues/886>`_) (`#887 <https://github.com/ros2/rmw_fastrtps//issues/887>`_)
+* Change the buffer-aware BUFBE: -> bufbe. (backport `#880 <https://github.com/ros2/rmw_fastrtps//issues/880>`_) (`#884 <https://github.com/ros2/rmw_fastrtps//issues/884>`_)
+* Fix UB in accessing the keys (`#879 <https://github.com/ros2/rmw_fastrtps//issues/879>`_) (`#882 <https://github.com/ros2/rmw_fastrtps//issues/882>`_)
+* Contributors: mergify[bot]
 
 9.4.7 (2026-04-14)
 ------------------

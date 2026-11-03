@@ -15,7 +15,7 @@
 #include "rmw_fastrtps_cpp/get_publisher.hpp"
 
 #include "rmw_fastrtps_shared_cpp/custom_publisher_info.hpp"
-#include "identifier.hpp"
+#include "rmw_fastrtps_cpp/identifier.hpp"
 
 namespace rmw_fastrtps_cpp
 {
