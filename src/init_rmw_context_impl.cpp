@@ -13,10 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "rmw_fastrtps_cpp/init_rmw_context_impl.hpp"
+#include "init_rmw_context_impl.hpp"
 
 #include <cassert>
 #include <memory>
+#include <string>
+#include <unordered_map>
+#include <utility>
 
 #include "rmw/error_handling.h"
 #include "rmw/init.h"
@@ -25,9 +28,9 @@
 #include "rmw_dds_common/context.hpp"
 #include "rmw_dds_common/msg/participant_entities_info.hpp"
 
-#include "rmw_fastrtps_cpp/identifier.hpp"
-#include "rmw_fastrtps_cpp/publisher.hpp"
-#include "rmw_fastrtps_cpp/subscription.hpp"
+#include "identifier.hpp"
+#include "publisher.hpp"
+#include "subscription.hpp"
 
 #include "rmw_fastrtps_shared_cpp/custom_participant_info.hpp"
 #include "rmw_fastrtps_shared_cpp/init_rmw_context_impl.hpp"
@@ -66,15 +69,45 @@ init_context_impl(
     return RMW_RET_BAD_ALLOC;
   }
 
+  auto * buffer_endpoint_registry =
+    static_cast<rmw_fastrtps_cpp::BufferEndpointRegistry *>(
+    context->impl->buffer_endpoint_registry);
+  BufferDiscoveryCallback buffer_discovery_callback =
+    [buffer_endpoint_registry](const rmw_gid_t & gid, const std::string & dds_topic_name,
+    const std::unordered_map<std::string, std::string> & backends, bool is_reader)
+    {
+      if (!buffer_endpoint_registry) {
+        return;
+      }
+      rmw_fastrtps_cpp::BufferEndpointInfo info;
+      info.gid = gid;
+      info.topic_name = _strip_ros_prefix_if_exists(dds_topic_name);
+      info.backend_metadata = backends;
+
+      RCUTILS_LOG_DEBUG_NAMED(
+        "rmw_fastrtps_cpp",
+        "DDS discovery: buffer-aware %s on topic '%s' (DDS: '%s'), %zu backend(s)",
+        is_reader ? "subscriber" : "publisher",
+        info.topic_name.c_str(), dds_topic_name.c_str(),
+        backends.size());
+
+      if (is_reader) {
+        buffer_endpoint_registry->notify_subscriber_discovered(info);
+      } else {
+        buffer_endpoint_registry->notify_publisher_discovered(info);
+      }
+    };
+
   std::unique_ptr<CustomParticipantInfo, std::function<void(CustomParticipantInfo *)>>
   participant_info(
-    rmw_fastrtps_shared_cpp::create_participant(
+    rmw_fastrtps_shared_cpp::create_participant_with_buffer_discovery(
       eprosima_fastrtps_identifier,
       context->actual_domain_id,
       &context->options.security_options,
       &context->options.discovery_options,
       context->options.enclave,
-      common_context.get()),
+      common_context.get(),
+      std::move(buffer_discovery_callback)),
     [&](CustomParticipantInfo * participant_info)
     {
       if (RMW_RET_OK != rmw_fastrtps_shared_cpp::destroy_participant(participant_info)) {
@@ -178,41 +211,11 @@ init_context_impl(
   context->impl->common = common_context.get();
   context->impl->participant_info = participant_info.get();
   participant_info->buffer_serialization_context_ = context->impl->buffer_serialization_context;
-  auto * buffer_endpoint_registry =
-    static_cast<rmw_fastrtps_cpp::BufferEndpointRegistry *>(
-    context->impl->buffer_endpoint_registry);
 
   rmw_ret_t ret = rmw_fastrtps_shared_cpp::run_listener_thread(context);
   if (RMW_RET_OK != ret) {
     return ret;
   }
-
-  // Hook buffer endpoint discovery into the DDS participant listener.
-  participant_info->listener_->set_buffer_discovery_callback(
-    [buffer_endpoint_registry](const rmw_gid_t & gid, const std::string & dds_topic_name,
-    const std::unordered_map<std::string, std::string> & backends, bool is_reader)
-    {
-      if (!buffer_endpoint_registry) {
-        return;
-      }
-      rmw_fastrtps_cpp::BufferEndpointInfo info;
-      info.gid = gid;
-      info.topic_name = _strip_ros_prefix_if_exists(dds_topic_name);
-      info.backend_metadata = backends;
-
-      RCUTILS_LOG_DEBUG_NAMED(
-        "rmw_fastrtps_cpp",
-        "DDS discovery: buffer-aware %s on topic '%s' (DDS: '%s'), %zu backend(s)",
-        is_reader ? "subscriber" : "publisher",
-        info.topic_name.c_str(), dds_topic_name.c_str(),
-        backends.size());
-
-      if (is_reader) {
-        buffer_endpoint_registry->notify_subscriber_discovered(info);
-      } else {
-        buffer_endpoint_registry->notify_publisher_discovered(info);
-      }
-    });
 
   common_context->graph_cache.set_on_change_callback(
     [guard_condition = graph_guard_condition.get()]()
